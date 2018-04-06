@@ -37,10 +37,12 @@ main(int argc, char* argv[]){
     }
   }
 
+#if defined(DEBUG)
   for(i=0; i < n; i++) {
     for(j=0; j < n; j++) {
       printf("%f ", C[INDEX(i, j, n)]);
     }
     printf("\n");
   }
+#endif
 }

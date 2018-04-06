@@ -1,6 +1,7 @@
 #!/bin/sh
 
-make > /dev/null
+make clean > /dev/null
+make debug > /dev/null
 
 do_test () {
     echo "Comparing './gemm $1' and './gemm_block $1 $2'"
@@ -24,3 +25,5 @@ do_test 32 4
 do_test 32 8
 do_test 100 4
 do_test 100 50
+
+make clean > /dev/null
