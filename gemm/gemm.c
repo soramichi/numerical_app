@@ -26,12 +26,12 @@ main(int argc, char* argv[]){
       C[INDEX(i,j,n)] = 0.0;
     }
   }
-
+  
   for(i=0; i < n; i++) {
     for(j=0; j < n; j++) {
       volatile double tmp = 0;
       for(k=0; k < n; k++) {
-	tmp += A[INDEX(i, j, n)] * B[INDEX(k, j, n)];
+	tmp += A[INDEX(i, k, n)] * B[INDEX(k, j, n)];
       }
       C[INDEX(i, j, n)] = tmp;
     }

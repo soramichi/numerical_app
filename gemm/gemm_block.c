@@ -7,7 +7,8 @@ main(int argc, char* argv[]){
   int n;
   volatile double *A, *B, *C;
   int i, j, k;
-  int ii, jj, b;
+  int ii, jj, kk;
+  int b;
   
   if(argc < 3) {
     fprintf(stderr, "Usage: %s n b\n", argv[0]);
@@ -23,26 +24,28 @@ main(int argc, char* argv[]){
 
   for(i=0; i < n; i++) {
     for(j=0; j < n; j++) {
-      A[INDEX(i,j,n)] = i + 1;
-      B[INDEX(i,j,n)] = j + 1;
-      C[INDEX(i,j,n)] = 0;
+      A[INDEX(i,j,n)] = i + 1.0;
+      B[INDEX(i,j,n)] = j + 1.0;
+      C[INDEX(i,j,n)] = 0.0;
     }
   }
 
   for(i=0; i < n; i+=b) {
     for(j=0; j < n; j+=b) {
-      for(ii=i; ii < i+b; ii++){
-	for(jj=j; jj < j+b ; jj++) {
-	  volatile double tmp = 0;
-	  for(k=0; k < b; k++) {
-	    tmp += A[INDEX(ii, jj, n)] * B[INDEX(k, jj, n)];
+      for(k=0; k < n; k+=b) {
+	for(ii=i; ii < i+b; ii++){
+	  for(jj=j; jj < j+b ; jj++) {
+	    volatile double tmp = 0;
+	    for(kk=k; kk < k+b; kk++) {
+	      tmp += A[INDEX(ii, kk, n)] * B[INDEX(kk, jj, n)];
+	    }
+	    C[INDEX(ii, jj, n)] += tmp;
 	  }
-	  C[INDEX(i, j, n)] += tmp;
 	}
       }
     }
   }
-
+  
   for(i=0; i < n; i++) {
     for(j=0; j < n; j++) {
       printf("%f ", C[INDEX(i, j, n)]);
