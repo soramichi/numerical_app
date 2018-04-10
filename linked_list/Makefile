@@ -7,7 +7,7 @@ debug:
 	make bmalloc_debug
 
 vanilla:
-	gcc linked_list.c -o linked_list -O3
+	gcc linked_list.c -o linked_list -O3 -g
 
 bmalloc:
 	gcc linked_list_bmalloc.c -o linked_list_bmalloc -O3 -DIMP -lnuma -pthread
