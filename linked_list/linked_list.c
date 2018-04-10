@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <sys/time.h>
 
 typedef struct list_node {
   int value;
@@ -121,7 +122,8 @@ list_node* init_list_random(int n, int max) {
 int main(int argc, char* argv[]){
   int n;
   list_node* l;
-
+  struct timeval start, end;
+  
   if (argc < 2) {
     fprintf(stderr, "Usage: %s n\n", argv[0]);
     fprintf(stderr, "Note: n must be a power of 2!\n");
@@ -131,15 +133,24 @@ int main(int argc, char* argv[]){
     n = atoi(argv[1]);
   }
 
+  
+  gettimeofday(&start, NULL);
   l = init_list_random(n, 2 * n);
+  gettimeofday(&end, NULL);
 #if defined(DEBUG)
   print_list_n(l, n);
 #endif
   
+  printf("init took %d us\n", ((end.tv_sec * 1000ULL * 1000ULL) + end.tv_usec) - ((start.tv_sec * 1000ULL * 1000ULL) + start.tv_usec));
+
+  gettimeofday(&start, NULL);
   l = merge_sort(l, n);
+  gettimeofday(&end, NULL);
 #if defined(DEBUG)
   print_list_n(l, n);
 #endif
+
+  printf("sort took %d us\n", ((end.tv_sec * 1000ULL * 1000ULL) + end.tv_usec) - ((start.tv_sec * 1000ULL * 1000ULL) + start.tv_usec));
   
   return 0;
 }
