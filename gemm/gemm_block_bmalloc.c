@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "bmalloc/bmalloc.c"
+#include "../bmalloc/bmalloc.c"
 
 #define INDEX(i,j,n) ((i) * (n) + (j))
 

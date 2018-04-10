@@ -3,7 +3,7 @@
 #include <time.h>
 #include <sys/time.h>
 
-#include "bmalloc/bmalloc.c"
+#include "../bmalloc/bmalloc.c"
 
 typedef struct list_node {
   //int value;
