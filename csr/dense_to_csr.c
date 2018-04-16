@@ -5,7 +5,7 @@
 int main() {
   char buff[10240];
   int num_rows, num_cols, num_values;
-  int *values, *i_array, *j_array;
+  int *values, *i_array, *j_array, *i_array_compressed;
 
   fgets(buff, sizeof(buff), stdin);
   sscanf(buff, "%d %d %d", &num_rows, &num_cols, &num_values);
@@ -17,7 +17,8 @@ int main() {
   values = (int*)malloc(sizeof(int) * num_values);
   i_array = (int*)malloc(sizeof(int) * num_values);
   j_array = (int*)malloc(sizeof(int) * num_values);
-
+  i_array_compressed = (int*)malloc(sizeof(int) * num_rows);
+  
   {
     int i, j;
     int n = 0;
@@ -62,7 +63,6 @@ int main() {
     
 
     printf("i_array_compressed:\n");
-    int* i_array_compressed = (int*)malloc(sizeof(int) * num_rows);
     for(i=0; i<num_rows; i++) {
       i_array_compressed[i] = -1; 
     }
