@@ -5,7 +5,7 @@
 
 #define INDEX(i,j,n) ((i) * (n) + (j))
 
-void print_double_array(volatile double* array, int n, char* name) {
+void print_double_array(double* array, int n, char* name) {
   int i;
 
   printf("%s:\n", name);
@@ -15,7 +15,7 @@ void print_double_array(volatile double* array, int n, char* name) {
   printf("\n");  
 }
 
-void print_integer_array(volatile int* array, int n, char* name) {
+void print_integer_array(int* array, int n, char* name) {
   int i;
 
   printf("%s:\n", name);
@@ -26,72 +26,82 @@ void print_integer_array(volatile int* array, int n, char* name) {
 }
 
 // an n x n matrix M has `num_values' values filled with randome values and all others with zero
-void dense_to_csr(volatile double* M, int n, int num_values, double** values, int** i_array, int** j_array) {
+void dense_to_csr(double* M, int n, int num_values, double** values, int** i_array, int** j_array) {
   // used only locally, no need to be retured to the caller
-  int* i_array_full = (int*)malloc(sizeof(int) * num_values);
+  int* j_array_full = (int*)malloc(sizeof(int) * num_values);
 
   // these arrays must be retured to the caller
   *values = (double*)malloc(sizeof(double) * num_values);
-  *i_array = (int*)malloc(sizeof(int) * n);
-  *j_array = (int*)malloc(sizeof(int) * num_values);
+  *i_array = (int*)malloc(sizeof(int) * num_values);
+  *j_array = (int*)malloc(sizeof(int) * n + 1);
 
   int i, j;
   int k = 0;
 
-  for(i = 0; i<n; i++) {
-    for(j = 0; j<n; j++) {
+  for(j = 0; j<n; j++) {
+    for(i = 0; i<n; i++) {
       double v = M[INDEX(i, j, n)];
       if(v != 0.0) {
 	(*values)[k] = v;
-	i_array_full[k] = i;
-	(*j_array)[k] = j;
+	(*i_array)[k] = i;
+	j_array_full[k] = j;
 	k++;
       }
     }
   }
 
-  for(i=0; i<n; i++) {
-    (*i_array)[i] = -1; 
+  for(k=0; k<n; k++) {
+    (*j_array)[k] = -1;
   }
-  for(i=0; i<num_values; i++) {
-    if((*i_array)[i_array_full[i]] == -1) {
-      (*i_array)[i_array_full[i]] = i;
+  for(k=0; k<num_values; k++) {
+    if((*j_array)[j_array_full[k]] == -1) {
+      (*j_array)[j_array_full[k]] = k;
     }
   }
+  (*j_array)[n] = num_values;
 
-  free(i_array_full);
-}
-
-void gemm_normal(double* A, double* B, double* C, int n) {
-  int i, j, k;
-
-  for(i=0; i < n; i++) {
-    for(j=0; j < n; j++) {
-      volatile double tmp = 0;
-      for(k=0; k < n; k++) {
-	tmp += A[INDEX(i, k, n)] * B[INDEX(k, j, n)];
-      }
-      C[INDEX(i, j, n)] = tmp;
+  for(k=n-1 /* not n */; k>=0 ; k--) {
+    if ((*j_array)[k] == -1) {
+      (*j_array)[k] = (*j_array)[k+1];
     }
   }
-}
-
-void gemm_csr(int n,
-		 double* values_A, int* i_array_A, int* j_array_A, int num_values_A,
-		 double* values_B, int* i_array_B, int* j_array_B, int num_values_B)
-{
   
+  free(j_array_full);
+}
+
+void gemv_normal(int n, double* A, double* B, double* C) {
+  int i, j;
+
+  // C = AB
+  for(j=0; j < n; j++) {
+    volatile double tmp = 0;
+    for(i=0; i < n; i++) {
+      tmp += A[INDEX(i, j, n)] * B[i];
+    }
+    C[j] = tmp;
+  }
+}
+
+void gemv_csr(int n, double* values_A, int* i_array_A, int* j_array_A /* compressed */, int num_values_A, double* B, double* C) {
+  int k, j;
+
+  for(k=0; k<n; k++) {
+    double tmp = 0.0;
+    for(j=j_array_A[k]; j<j_array_A[k+1]; j++) {
+      tmp += values_A[j] * B[i_array_A[j]];
+    }
+    C[k] = tmp;
+  }
 }
 
 int main(int argc, char* argv[]) {
   int n = 0, i, j;
   double ratio = 0.2; // ratio of the elements that are filled
 
-  volatile double *A, *B, *C;
-  double *values_A, *values_B;
-  int *i_array_A, *i_array_B;
-  int *j_array_A, *j_array_B;
-  int num_values_A = 0, num_values_B = 0;
+  double *A, *B, *C;
+  double *values_A;
+  int *i_array_A, *j_array_A;
+  int num_values_A = 0;
 
   srand(time(NULL));
 
@@ -109,8 +119,8 @@ int main(int argc, char* argv[]) {
   }
 
   A = malloc(sizeof(double) * n * n);
-  B = malloc(sizeof(double) * n * n);
-  C = malloc(sizeof(double) * n * n);
+  B = malloc(sizeof(double) * n);
+  C = malloc(sizeof(double) * n);
   
   for(i=0; i < n; i++) {
     for(j=0; j < n; j++) {
@@ -123,49 +133,39 @@ int main(int argc, char* argv[]) {
 	A[INDEX(i,j,n)] = 0.0;
       }
 
-      // initialize B
-      if(rand() / (double)RAND_MAX < ratio) {
-	B[INDEX(i,j,n)] = i + j + 1.0;
-	num_values_B++;
-      }
-      else {
-	B[INDEX(i,j,n)] = 0.0;
-      }
-
-      // initialize C
-      C[INDEX(i, j, n)] = 0.0;
+      // initialize B, C
+      B[i] = i + 1.0;
+      C[i] = 0.0;
     }
   }
 
   dense_to_csr(A, n, num_values_A, &values_A, &i_array_A, &j_array_A);
-  dense_to_csr(B, n, num_values_B, &values_B, &i_array_B, &j_array_B);
 
   // for debug
-  /*
-  printf("A -----------------------------\n");
-  for(i=0; i<n; i++) {
-    for(j=0; j<n; j++) {
+#if defined(DEBUG)
+  printf("A -----------------------------:\n");
+  for(j=0; j<n; j++) {
+    for(i=0; i<n; i++) {
       printf("%.2f ", A[INDEX(i, j, n)]);
     }
     printf("\n");
   }
-  printf("num_values_A: %d\n", num_values_A);
-  print_double_array(values_A, num_values_A, "values_A");
-  print_integer_array(i_array_A, n, "i_array_A");
-  print_integer_array(j_array_A, num_values_A, "j_array_A");
+  printf("num_values: %d\n", num_values_A);
+  print_double_array(values_A, num_values_A, "values");
+  print_integer_array(i_array_A, num_values_A, "i_array");
+  print_integer_array(j_array_A, n + 1, "j_array (compressed)");
 
-  printf("B -----------------------------\n");
-  for(i=0; i<n; i++) {
-    for(j=0; j<n; j++) {
-      printf("%.2f ", B[INDEX(i, j, n)]);
-    }
-    printf("\n");
-  }
-  printf("num_values: %d\n", num_values_B);
-  print_double_array(values_B, num_values_B, "values");
-  print_integer_array(i_array_B, n, "i_array");
-  print_integer_array(j_array_B, num_values_B, "j_array");
-  */
-  
+  print_double_array(B, n, "B -----------------------------------");
+
+  gemv_normal(n, A, B, C);
+  print_double_array(C, n, "C_ref");
+#endif
+
+  gemv_csr(n, values_A, i_array_A, j_array_A, num_values_A, B, C);
+
+#if defined(DEBUG)
+  print_double_array(C, n, "C_csr");
+#endif  
+
   return 0;
 }
