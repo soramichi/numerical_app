@@ -24,9 +24,9 @@ int main(int argc, char* argv[]){
   for(i=0; i < n; i++) {
     for(j=0; j < n; j++) {
       A[INDEX(i,j,n)] = i + 1.0;
-      B[i] = j + 1.0;
-      C[i] = 0.0;
     }
+    B[i] = i + 1.0;
+    C[i] = 0.0;
   }
 
   // C = AB
