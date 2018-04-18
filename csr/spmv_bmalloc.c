@@ -123,8 +123,8 @@ int main(int argc, char* argv[]) {
   }
 
   A = malloc(sizeof(double) * n * n);
-  B = malloc(sizeof(double) * n);
-  C = malloc(sizeof(double) * n);
+  B = balloc_malloc(&balloc, sizeof(double) * n, &default_attr);
+  B = balloc_malloc(&balloc, sizeof(double) * n, &default_attr);
   
   for(i=0; i < n; i++) {
     for(j=0; j < n; j++) {
