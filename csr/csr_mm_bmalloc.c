@@ -3,6 +3,8 @@
 #include <string.h>
 #include <time.h>
 
+#include "../bmalloc/bmalloc.c"
+
 #define INDEX(i,j,n) ((i) * (n) + (j))
 
 void print_double_array(double* array, int n, char* name) {
@@ -31,7 +33,8 @@ void dense_to_csr(double* M, int n, int num_values, double** values, int** i_arr
   int* j_array_full = (int*)malloc(sizeof(int) * num_values);
 
   // these arrays must be retured to the caller
-  *values = (double*)malloc(sizeof(double) * num_values);
+  //*values = (double*)malloc(sizeof(double) * num_values);
+  *values = (double*)balloc_malloc(&balloc, sizeof(double) * num_values, &default_attr);
   *i_array = (int*)malloc(sizeof(int) * num_values);
   *j_array = (int*)malloc(sizeof(int) * n + 1);
 
@@ -103,13 +106,13 @@ int main(int argc, char* argv[]) {
   double *values_A;
   int *i_array_A, *j_array_A;
   int num_values_A = 0;
-
   struct timeval start, end;
 
-  gettimeofday(&start, NULL);
-  
+  balloc_init(&balloc, 0, 0, 1); // the 2nd and 3rd parameters do not matter here
+
   srand(time(NULL));
-  
+
+  gettimeofday(&start, NULL);
   if(argc < 3) {
     fprintf(stderr, "Usage: %s matrix_size num_loops\n", argv[0]);
     return 1;
@@ -180,5 +183,7 @@ int main(int argc, char* argv[]) {
   print_double_array(C, n, "C_csr");
 #endif  
 
+  balloc_finalize(&balloc);
+  
   return 0;
 }
