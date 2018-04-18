@@ -1,10 +1,10 @@
 all:
 	gcc dense_to_csr.c -o dense_to_csr -O3
-	gcc csr_mm.c -o csr_mm -O3
-	gcc csr_mm_bmalloc.c -o csr_mm_bmalloc -O3 -DIMP -lnuma -pthread
+	gcc spmv.c -o spmv -O3
+	gcc spmv_bmalloc.c -o spmv_bmalloc -O3 -DIMP -lnuma -pthread
 
 debug:
-	gcc csr_mm.c -o csr_mm -Wall -DDEBUG -g
+	gcc spmv.c -o spmv -Wall -DDEBUG -g
 
 clean:
-	rm -rf *~ dense_to_csr csr_mm csr_mm_bmalloc
+	rm -rf *~ dense_to_csr spmv spmv_bmalloc
