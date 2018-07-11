@@ -18,5 +18,9 @@ vanilla_debug:
 bmalloc_debug:
 	gcc -O3 seq_search_bmalloc.c -o seq_search_bmalloc -DIMP -pthread -lnuma
 
+gem5:
+	gcc -O3 seq_search_gem5_normal.c ../../mmap_allocator/mmap_allocator.c -I ../../mmap_allocator -o seq_search_gem5_normal
+	gcc -O3 seq_search_gem5_approximate.c ../../mmap_allocator/mmap_allocator.c -I ../../mmap_allocator -o seq_search_gem5_approximate
+
 clean:
-	rm -rf *~ seq_search seq_search_bmalloc
+	rm -rf *~ seq_search seq_search_bmalloc seq_search_gem5_normal seq_search_gem5_approximate
