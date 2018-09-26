@@ -84,6 +84,8 @@ list_node* init_list_random(int n, int max) {
   list_node* root = (list_node*)mm_malloc_normal(sizeof(list_node));
   list_node* ptr = root;
   int i;
+
+  printf("Size of allocated data: %d\n", n * sizeof(list_node));
   
   srand(time(NULL));
   

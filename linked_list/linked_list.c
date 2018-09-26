@@ -133,7 +133,8 @@ int main(int argc, char* argv[]){
     n = atoi(argv[1]);
   }
 
-  
+  printf("size of list node: %d\n", sizeof(struct list_node));
+
   gettimeofday(&start, NULL);
   l = init_list_random(n, 2 * n);
   gettimeofday(&end, NULL);
