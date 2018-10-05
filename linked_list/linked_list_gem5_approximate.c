@@ -93,6 +93,8 @@ list_node* init_list_random(int n, int max) {
 
   int* values_region = (int*)mm_malloc_approximate(sizeof(int) * n);
 
+  printf("node: %llu, value: %llu\n", ptr, values_region);
+  
   for(i=0; i < n; i++) {
     ptr->value = (values_region + i);
     *(ptr->value) = rand() % 10000;
