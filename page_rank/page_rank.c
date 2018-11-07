@@ -29,7 +29,8 @@ int main(int argc, char* argv[]){
   }
 
   struct page* pages = (struct page*)malloc(sizeof(struct page) * n_pages);
-
+  double* rank_next = malloc(sizeof(double) * n_pages);
+  
   gettimeofday(&start, NULL);
   for(i=0; i<n_pages; i++) {
     pages[i].n_links = (rand() % N_LINKS_MAX) + 1;
@@ -78,7 +79,6 @@ int main(int argc, char* argv[]){
 
 
   gettimeofday(&start, NULL);
-  double* rank_next = malloc(sizeof(double) * n_pages);
   int n_loop = 0;
 
   while(1) {

@@ -32,7 +32,8 @@ int main(int argc, char* argv[]){
 
   struct page* pages = (struct page*)mm_malloc_normal(sizeof(struct page) * n_pages);
   double* ranks = (double*)mm_malloc_normal(sizeof(double) * n_pages);
- 
+  double* rank_next = malloc(sizeof(double) * n_pages); // use normal malloc??
+
   gettimeofday(&start, NULL);
   for(i=0; i<n_pages; i++) {
     pages[i].rank = ranks + i;
@@ -82,7 +83,6 @@ int main(int argc, char* argv[]){
 
 
   gettimeofday(&start, NULL);
-  double* rank_next = malloc(sizeof(double) * n_pages);
   int n_loop = 0;
 
   while(1) {
