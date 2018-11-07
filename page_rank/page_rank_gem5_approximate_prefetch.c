@@ -92,33 +92,30 @@ int main(int argc, char* argv[]){
     n_loop++;
  
     for(i=0; i<n_pages; i++) {
-      // no prefetch for pages[i], as the accesses are sequential
-      for(j=0; j<pages[i].n_links; j++) {
+      struct page pi; // pattern2
+      fetch(pi, pages + i, pages, ranks);
+      for(j=0; j<pi.n_links; j++) {
 	int target = pages[i].links[j];
-	// prefetch for pages[target] as the accesss are random
-	struct page p;
+	struct page p; // pattern1
 	fetch(p, pages + target, pages, ranks_next);
-	*(p.rank_next) += *(pages[i].rank) / pages[i].n_links;
+	*(p.rank_next) += *(pi.rank) / pi.n_links;
       }
     }
 
     double e_max = 0;
     for(i=0; i<n_pages; i++) {
-      // no prefetch is needed as the accesses are sequential
-      double e_this = *(pages[i].rank_next) - *(pages[i].rank); 
+      struct page pi; // pattern3
+      fetch2(pi, pages + i, pages, ranks, ranks_next);
+      double e_this = *(pi.rank_next) - *(pi.rank); 
       if(e_this > e_max) {
 	e_max = e_this;
       }
+      *(pi.rank) = *(pi.rank_next);
+      *(pi.rank_next) = 0.0;
     }
 
     if (e_max < e)
       goto end;
-
-    for(i=0; i<n_pages; i++) {
-      // no prefetch is needed as the accesses are sequential
-      *(pages[i].rank) = *(pages[i].rank_next);
-      *(pages[i].rank_next) = 0.0;
-    }
   }
 
  end:;

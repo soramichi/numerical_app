@@ -104,15 +104,12 @@ int main(int argc, char* argv[]){
       if(e_this > e_max) {
 	e_max = e_this;
       }
+      *(pages[i].rank) = *(pages[i].rank_next);
+      *(pages[i].rank_next) = 0.0;
     }
 
     if (e_max < e)
       goto end;
-
-    for(i=0; i<n_pages; i++) {
-      *(pages[i].rank) = *(pages[i].rank_next);
-      *(pages[i].rank_next) = 0.0;
-    }
   }
 
  end:;
