@@ -9,6 +9,7 @@ const double  e = 0.000001;
 
 struct page {
   double rank;
+  double rank_next;
   int n_links;
   int links[N_LINKS_MAX];
 };
@@ -29,8 +30,7 @@ int main(int argc, char* argv[]){
   }
 
   struct page* pages = (struct page*)malloc(sizeof(struct page) * n_pages);
-  double* rank_next = malloc(sizeof(double) * n_pages);
-  
+
   gettimeofday(&start, NULL);
   for(i=0; i<n_pages; i++) {
     pages[i].n_links = (rand() % N_LINKS_MAX) + 1;
@@ -70,7 +70,7 @@ int main(int argc, char* argv[]){
 
   for(i=0; i<n_pages; i++) {
     pages[i].rank = 0.0;
-    rank_next[i] = 0.0;
+    pages[i].rank_next = 0.0;
   }
   pages[0].rank = 1.0; // assume page[0] belongs to the largest clique
   
@@ -86,13 +86,14 @@ int main(int argc, char* argv[]){
  
     for(i=0; i<n_pages; i++) {
       for(j=0; j<pages[i].n_links; j++) {
-	rank_next[pages[i].links[j]] += pages[i].rank / pages[i].n_links;
+	int target = pages[i].links[j];
+	pages[target].rank_next += pages[i].rank / pages[i].n_links;
       }
     }
 
     double e_max = 0;
     for(i=0; i<n_pages; i++) {
-      double e_this = rank_next[i] - pages[i].rank; 
+      double e_this = pages[i].rank_next - pages[i].rank; 
       if(e_this > e_max) {
 	e_max = e_this;
       }
@@ -102,8 +103,8 @@ int main(int argc, char* argv[]){
       goto end;
 
     for(i=0; i<n_pages; i++) {
-      pages[i].rank = rank_next[i];
-      rank_next[i] = 0.0;
+      pages[i].rank = pages[i].rank_next;
+      pages[i].rank_next = 0.0;
     }
   }
 
