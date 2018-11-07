@@ -70,6 +70,12 @@ int main(int argc, char* argv[]){
   }
   printf("%d pages out of %d are connected\n", connected, n_pages);
 #endif
+
+  for(i=0; i<n_pages; i++) {
+    *(pages[i].rank) = 0.0;
+    rank_next[i] = 0.0;
+  }
+  *(pages[0].rank) = 1.0; // assume page[0] belongs to the largest clique
   
   gettimeofday(&end, NULL);
   printf("init took %d us\n", ((end.tv_sec * 1000ULL * 1000ULL) + end.tv_usec) - ((start.tv_sec * 1000ULL * 1000ULL) + start.tv_usec));
@@ -78,12 +84,6 @@ int main(int argc, char* argv[]){
   gettimeofday(&start, NULL);
   double* rank_next = malloc(sizeof(double) * n_pages);
   int n_loop = 0;
-
-  for(i=0; i<n_pages; i++) {
-    *(pages[i].rank) = 0.0;
-    rank_next[i] = 0.0;
-  }
-  *(pages[0].rank) = 1.0; // assume page[0] belongs to the largest clique
 
   while(1) {
     n_loop++;
