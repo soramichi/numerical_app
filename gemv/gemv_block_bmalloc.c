@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <sys/time.h>
 
+#include "../../bmalloc/bmalloc.c"
+
 #define INDEX(i,j,n) ((i) * (n) + (j))
 
 int main(int argc, char* argv[]){
@@ -10,6 +12,8 @@ int main(int argc, char* argv[]){
   int i, j, ii, jj;
   int b;
   struct timeval start, end;
+  
+  balloc_init(&balloc, 0, 0); // the 2nd and 3rd parameters do not matter here
   
   if(argc < 3) {
     fprintf(stderr, "Usage: %s n b\n", argv[0]);
@@ -20,9 +24,9 @@ int main(int argc, char* argv[]){
     b = atoi(argv[2]); // block size
   }
 
-  A = malloc(sizeof(double) * n * n);
-  B = malloc(sizeof(double) * n);
-  C = malloc(sizeof(double) * n);
+  A = balloc_malloc(&balloc, sizeof(double) * n * n, &default_attr);
+  B = balloc_malloc(&balloc, sizeof(double) * n, &default_attr);
+  C = balloc_malloc(&balloc, sizeof(double) * n, &default_attr);
 
   // init
   gettimeofday(&start, NULL);
