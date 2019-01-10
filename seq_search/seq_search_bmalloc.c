@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "../bmalloc/bmalloc.c"
+#include "../../bmalloc/bmalloc.c"
 
 typedef struct array_node {
   unsigned long id;   // 4B
@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
   double thres = 0.5;
   int found = 0;
 
-  balloc_init(&balloc, 0, 0, 1); // the 2nd and 3rd parameters do not matter here
+  balloc_init(&balloc, 0, 0); // the 2nd and 3rd parameters do not matter here
   
   if (argc < 3) {
     fprintf(stderr, "Usage: %s array_size num_loops\n",argv[0]);
