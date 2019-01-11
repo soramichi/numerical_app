@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
   printf("Allocated approximate memory: %d\n", sizeof(double) * size);
 
   people = (struct person*)mm_malloc_normal(sizeof(struct person) * size);
-  values = (double*)mm_malloc_normal(sizeof(double) * size);
+  values = (double*)mm_malloc_approximate(sizeof(double) * size);
   
   printf("critical_head: %llu\n", people);
   printf("approximate_head: %llu\n", values);
