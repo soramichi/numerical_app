@@ -16,6 +16,9 @@ void init_array(array_node* array, int n) {
   
   double* values_region = (double*)mm_malloc_approximate(sizeof(double) * n);
 
+  printf("critical_head: %llu\n", array);
+  printf("approximate_head: %llu\n", values_region);
+
   for(i=0; i<n; i++) {
     array[i].id = i;
     //array[i].value = rand() / (double)RAND_MAX;
@@ -41,7 +44,7 @@ int main(int argc, char* argv[]) {
 
   printf("Size of an array_node: %d\n", sizeof(array_node));
   printf("Size of allocated memory: %d\n", sizeof(array_node) * n);
-
+  
   gettimeofday(&start, NULL);
   array_node* array = (array_node*)mm_malloc_normal(sizeof(array_node) * n);
   init_array(array, n);

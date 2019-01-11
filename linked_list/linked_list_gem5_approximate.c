@@ -93,12 +93,14 @@ list_node* init_list_random(int n, int max) {
 
   int* values_region = (int*)mm_malloc_approximate(sizeof(int) * n);
 
-  printf("node: %llu, value: %llu\n", ptr, values_region);
-  
+  printf("critical_head: %llu\n", ptr);
+  printf("approximate_head: %llu\n", values_region);
+
   for(i=0; i < n; i++) {
     ptr->value = (values_region + i);
     *(ptr->value) = rand() % 10000;
     if (i < n - 1) {
+      //ptr->next = (list_node*)mm_malloc_normal(sizeof(list_node));
       ptr->next = (list_node*)mm_malloc_normal(sizeof(list_node));
       ptr = ptr->next;
     }
