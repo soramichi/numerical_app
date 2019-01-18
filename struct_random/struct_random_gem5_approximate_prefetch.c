@@ -6,12 +6,13 @@
 
 struct person {
   int id;
-  double score;
+  //  double score;
 };
 
 int main(int argc, char* argv[]) {
   int size, n_access, i;
   struct person* people;
+  double* values;
   struct timeval start, end;
   
   srand(time(NULL));
@@ -27,25 +28,35 @@ int main(int argc, char* argv[]) {
   }
 
   printf("size: %d, n_access: %d\n", size, n_access);
-  printf("Allocated memory: %d\n", sizeof(struct person) * size);
+  printf("Allocated critical memory: %d\n", sizeof(struct person) * size);
+  printf("Allocated approximate memory: %d\n", sizeof(double) * size);
+
   people = (struct person*)mm_malloc_normal(sizeof(struct person) * size);
+  values = (double*)mm_malloc_approximate(sizeof(double) * size);
+
+  printf("people: %llu, values: %llu\n", people, values);
 
   gettimeofday(&start, NULL);
   for(i=0; i<size; i++) {
     people[i].id = i % 100;
-    people[i].score = (double)i;
+    //people[i].score = values + i;
+    //*(people[i].score) = (double)i;
+    values[i] = (double)i;
   }
   gettimeofday(&end, NULL);
 
   printf("init took %d us\n", ((end.tv_sec * 1000ULL * 1000ULL) + end.tv_usec) - ((start.tv_sec * 1000ULL * 1000ULL) + start.tv_usec));
 
   gettimeofday(&start, NULL);
-  unsigned long ans_id = 0;
+  unsigned long ans_id;
   double ans = 0.0;
   for(i=0; i<n_access; i++) {
     int target = rand() % size;
-    ans_id += people[target].id;
-    ans += people[target].score;
+    double tmp;
+    struct person node;
+    fetch_new(node, tmp, people + target, people, values);
+    ans_id += node.id;
+    ans += tmp;
   }
   gettimeofday(&end, NULL);
 

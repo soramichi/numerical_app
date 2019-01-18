@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
 
   gettimeofday(&start, NULL);
   for(i=0; i<size; i++) {
-    people[i].id = i;
+    people[i].id = i % 100;
     people[i].score = values + i;
     *(people[i].score) = (double)i;
   }
@@ -49,14 +49,17 @@ int main(int argc, char* argv[]) {
   printf("init took %d us\n", ((end.tv_sec * 1000ULL * 1000ULL) + end.tv_usec) - ((start.tv_sec * 1000ULL * 1000ULL) + start.tv_usec));
 
   gettimeofday(&start, NULL);
+  unsigned long ans_id;
   double ans = 0.0;
   for(i=0; i<n_access; i++) {
     int target = rand() % size;
+    ans_id += people[target].id;
     ans += *(people[target].score);
   }
   gettimeofday(&end, NULL);
 
   printf("access took %d us\n", ((end.tv_sec * 1000ULL * 1000ULL) + end.tv_usec) - ((start.tv_sec * 1000ULL * 1000ULL) + start.tv_usec));
+  printf("ans_id: %lu\n", ans_id);
   printf("ans: %f\n", ans);
 
   return 0;
