@@ -5,7 +5,7 @@
 #include "mmap_allocator.h"
 
 struct person {
-  int id;
+  unsigned long id;
   //  double score;
   double* score;
 };

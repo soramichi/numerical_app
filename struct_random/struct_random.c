@@ -4,7 +4,7 @@
 #include <sys/time.h>
 
 struct person {
-  int id;
+  unsigned long id;
   double score;
 };
 

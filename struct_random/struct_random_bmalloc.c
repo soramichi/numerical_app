@@ -2,17 +2,22 @@
 #include <stdlib.h>
 #include <time.h>
 #include <sys/time.h>
-#include "mmap_allocator.h"
+
+#include "../../bmalloc/bmalloc.c"
 
 struct person {
-  unsigned long id;
-  double score;
+  int id;
+  //  double score;
+  double* score;
 };
 
 int main(int argc, char* argv[]) {
   int size, n_access, i;
   struct person* people;
+  double* values;
   struct timeval start, end;
+
+  balloc_init(&balloc, 0, 0); // the 2nd and 3rd parameters do not matter here
   
   srand(time(NULL));
 
@@ -27,30 +32,33 @@ int main(int argc, char* argv[]) {
   }
 
   printf("size: %d, n_access: %d\n", size, n_access);
-  printf("Allocated memory: %d\n", sizeof(struct person) * size);
-  people = (struct person*)mm_malloc_normal(sizeof(struct person) * size);
+  printf("Allocated critical memory: %d\n", sizeof(struct person) * size);
+  printf("Allocated approximate memory: %d\n", sizeof(double) * size);
+
+  people = (struct person*)malloc(sizeof(struct person) * size);
+  values = (double*)balloc_malloc(&balloc, sizeof(double) * size, &default_attr);
+
+  printf("people: %llu, values: %llu\n", people, values);
 
   gettimeofday(&start, NULL);
   for(i=0; i<size; i++) {
-    people[i].id = i % 100;
-    people[i].score = (double)i;
+    people[i].id = i;
+    people[i].score = values + i;
+    *(people[i].score) = (double)i;
   }
   gettimeofday(&end, NULL);
 
   printf("init took %d us\n", ((end.tv_sec * 1000ULL * 1000ULL) + end.tv_usec) - ((start.tv_sec * 1000ULL * 1000ULL) + start.tv_usec));
 
   gettimeofday(&start, NULL);
-  unsigned long ans_id = 0;
   double ans = 0.0;
   for(i=0; i<n_access; i++) {
     int target = rand() % size;
-    ans_id += people[target].id;
-    ans += people[target].score;
+    ans += *(people[target].score);
   }
   gettimeofday(&end, NULL);
 
   printf("access took %d us\n", ((end.tv_sec * 1000ULL * 1000ULL) + end.tv_usec) - ((start.tv_sec * 1000ULL * 1000ULL) + start.tv_usec));
-  printf("ans_id: %lu\n", ans_id);
   printf("ans: %f\n", ans);
 
   return 0;
