@@ -3,10 +3,11 @@
 #include <time.h>
 #include <sys/time.h>
 #include "mmap_allocator.h"
+#include "common.h"
 
 struct person {
-  unsigned long id;
-  double score;
+  id_type id;
+  score_type score;
 };
 
 int main(int argc, char* argv[]) {
@@ -27,13 +28,14 @@ int main(int argc, char* argv[]) {
   }
 
   printf("size: %d, n_access: %d\n", size, n_access);
+  printf("id_type: %d, score_type: %d, person: %d\n", sizeof(id_type), sizeof(score_type), sizeof(struct person));
   printf("Allocated memory: %d\n", sizeof(struct person) * size);
   people = (struct person*)mm_malloc_normal(sizeof(struct person) * size);
 
   gettimeofday(&start, NULL);
   for(i=0; i<size; i++) {
-    people[i].id = i % 100;
-    people[i].score = (double)i;
+    people[i].id = (id_type)(i % 100);
+    people[i].score = (score_type)(i % 100);
   }
   gettimeofday(&end, NULL);
 
@@ -45,7 +47,7 @@ int main(int argc, char* argv[]) {
   for(i=0; i<n_access; i++) {
     int target = rand() % size;
     ans_id += people[target].id;
-    ans += people[target].score;
+    ans += (double)people[target].score;
   }
   gettimeofday(&end, NULL);
 
