@@ -10,4 +10,4 @@ gem5:
 	gcc struct_random_gem5_approximate_prefetch.c  ../../mmap_allocator/mmap_allocator.c -I ../../mmap_allocator -o struct_random_gem5_approximate_prefetch -O3 -DUSE_APPROXIMATE
 
 clean:
-	rm -rf *~ struct_random struct_random_gem5_normal struct_random_gem5_approximate
+	rm -rf *~ struct_random_bmalloc struct_random struct_random_gem5_normal struct_random_gem5_approximate struct_random_gem5_approximate_prefetch
