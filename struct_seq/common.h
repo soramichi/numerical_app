@@ -1,7 +1,7 @@
 #if !defined(__COMMON_H)
 #define __COMMON_H
 
-typedef char id_type;
-typedef long double score_type;
+typedef unsigned long id_type;
+typedef unsigned long score_type;
 
 #endif
