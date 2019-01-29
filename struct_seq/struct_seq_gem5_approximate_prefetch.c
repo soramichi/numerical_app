@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
   printf("init took %d us\n", ((end.tv_sec * 1000ULL * 1000ULL) + end.tv_usec) - ((start.tv_sec * 1000ULL * 1000ULL) + start.tv_usec));
 
   gettimeofday(&start, NULL);
-  unsigned long ans_id;
+  unsigned long ans_id = 0;
   double ans = 0.0;
   for(i=0; i<n_access; i++) {
     int target = i % size;
