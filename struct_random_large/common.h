@@ -1,7 +1,7 @@
 #if !defined(__COMMON_H)
 #define __COMMON_H
 
-#define PADDING_SIZE 2
+#define PADDING_SIZE 0
 
 #define ID_TYPE long
 #define SCORE_DECLARATION struct {    \
