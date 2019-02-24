@@ -11,3 +11,10 @@ gem5:
 
 clean:
 	rm -rf *~ struct_seq_large_bmalloc struct_seq_large struct_seq_large_gem5_normal struct_seq_large_gem5_approximate struct_seq_large_gem5_approximate_prefetch
+
+asm:
+	gcc -S struct_seq_large_gem5_approximate_prefetch.c  -I ../../mmap_allocator -o struct_seq_large_gem5_approximate_prefetch.s -O3
+
+asm_build:
+	as struct_seq_large_gem5_approximate_prefetch.s -o struct_seq_large_gem5_approximate_prefetch.o
+	gcc struct_seq_large_gem5_approximate_prefetch.o ../../mmap_allocator/mmap_allocator.c -o struct_seq_large_gem5_approximate_prefetch -O3 -DUSE_APPROXIMATE
