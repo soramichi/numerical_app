@@ -11,7 +11,7 @@ struct person {
 };
 
 int main(int argc, char* argv[]) {
-  int size, n_access, i;
+  int size, n_access, i, k = 1;
   struct person* people;
   score_type* values;
   struct timeval start, end;
@@ -49,11 +49,15 @@ int main(int argc, char* argv[]) {
 
   gettimeofday(&start, NULL);
   unsigned long ans_id;
-  double ans = 0.0;
-  for(i=0; i<n_access; i++) {
-    int target = i % size;
-    ans_id += people[target].id;
-    ans += people[target].sp->score;
+  double ans;
+  while(k--) {
+    ans_id = 0;
+    ans = 0.0;
+    for(i=0; i<n_access; i++) {
+      int target = i % size;
+      ans_id += people[target].id;
+      ans += people[target].sp->score;
+    }
   }
   gettimeofday(&end, NULL);
 
