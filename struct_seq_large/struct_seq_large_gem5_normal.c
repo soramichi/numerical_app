@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
     ans_id = 0;
     ans = 0.0;
     for(i=0; i<n_access; i++) {
-      int target = i % size;
+      int target = i & (size - 1); // assume size % 2 == 0
       ans_id += people[target].id;
       ans += (double)people[target].score;
     }

@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
     ans_id = 0;
     ans = 0.0;  
     for(i=0; i<n_access; i++) {
-      int target = i % size;
+      int target = i & (size - 1); // assume size % 2 == 0
       score_type tmp;
       struct person node;
       fetch_new(node, tmp, people + target, people, values);
