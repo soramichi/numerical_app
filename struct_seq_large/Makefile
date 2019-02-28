@@ -18,3 +18,4 @@ asm:
 asm_build:
 	as struct_seq_large_gem5_approximate_prefetch.s -o struct_seq_large_gem5_approximate_prefetch.o
 	gcc struct_seq_large_gem5_approximate_prefetch.o ../../mmap_allocator/mmap_allocator.c -o struct_seq_large_gem5_approximate_prefetch -O3 -DUSE_APPROXIMATE
+	rm -f struct_seq_large_gem5_approximate_prefetch.o
