@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
   unsigned long ans_id = 0;
   double ans = 0.0;
   for(i=0; i<n_access; i++) {
-    int target = rand() % size;
+    int target = rand() & (size - 1); // assume size is a power of 2
     score_type tmp;
     struct person node;
     fetch_new(node, tmp, people + target, people, values);
