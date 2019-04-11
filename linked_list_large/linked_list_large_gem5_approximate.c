@@ -163,7 +163,7 @@ int main(int argc, char* argv[]){
 #endif
 
   printf("sort took %d us\n", ((end.tv_sec * 1000ULL * 1000ULL) + end.tv_usec) - ((start.tv_sec * 1000ULL * 1000ULL) + start.tv_usec));
-  confirm(l, n);
+  //confirm(l, n);
   
   return 0;
 }
